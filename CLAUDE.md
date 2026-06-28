@@ -8,7 +8,7 @@ A Celery-backed ingestion pipeline that fetches arXiv papers daily, persists met
 
 - **Orchestration:** Celery + Celery Beat (periodic tasks)
 - **Broker:** Redis (assumed; configurable via env)
-- **Database:** SQLite (local file on external SSD)
+- **Database:** SQLite (local file, path configurable via env)
 - **PDF Storage:** Local filesystem
 - **API:** FastAPI + Uvicorn
 - **Agent Framework:** LangGraph / LangChain (requirements present; agent layer TBD)
@@ -71,7 +71,7 @@ published_date TIMESTAMP,     -- arXiv announcement date
 updated_date TIMESTAMP,       -- last update
 categories TEXT,              -- comma-separated (cs.AI,cs.LG)
 pdf_url TEXT,
-filepath TEXT,                -- local PDF path on SSD
+filepath TEXT,                -- local PDF path
 version TEXT,
 created_at TIMESTAMP
 ```
@@ -79,7 +79,7 @@ created_at TIMESTAMP
 ### Storage Layout
 
 ```
-/Volumes/Extreme SSD/Personal/datasets/
+$PAPERS_STORAGE_PATH/          # configured via .env
   papers.db                   # SQLite DB
   papers/
     cs_AI/
@@ -175,8 +175,8 @@ All settings live in `src/config.py` and can be overridden via `.env`:
 ```bash
 CELERY_BROKER_URL=redis://localhost:6379/0
 CELERY_RESULT_BACKEND=redis://localhost:6379/0
-PAPERS_STORAGE_PATH=/Volumes/Extreme SSD/Personal/datasets/papers
-SQLITE_DB_PATH=/Volumes/Extreme SSD/Personal/datasets/papers.db
+PAPERS_STORAGE_PATH=/your/data/path/papers
+SQLITE_DB_PATH=/your/data/path/papers.db
 ARXIV_MAX_RESULTS_PER_QUERY=100
 ARXIV_RATE_LIMIT_SECONDS=3.0
 CHROMA_HOST=localhost
